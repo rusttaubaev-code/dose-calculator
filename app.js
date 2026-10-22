@@ -9,7 +9,7 @@ T.forEach(t=>IDX.push({type:'topic',id:t.id,title:t.title,kw:norm(t.keywords||''
 D.forEach((d,i)=>IDX.push({type:'drug',id:i,title:d.n,text:norm([d.n,d.ind,d.f].join(' '))}));
 function search(q){q=norm(q).trim();if(!q)return [];const words=q.split(/\s+/).filter(Boolean);const res=[];
   IDX.forEach(e=>{let score=0;for(const w of words){const stem=w.length>5?w.slice(0,w.length-2):w;
-    if(norm(e.title).includes(w))score+=10;else if(e.text.includes(stem))score+=3;else{score=-1;break}}
+    if(norm(e.title).includes(w))score+=10;else if(e.text.includes(stem))score+=3+(e.kw&&e.kw.includes(stem)?2:0);else{score=-1;break}}
     if(score>0&&words.length>1&&e.kw&&e.kw.includes(words.join(' ')))score+=e.kw.startsWith(words.join(' '))?12:8;
     if(score>0)res.push(Object.assign({score},e))});
   return res.sort((a,b)=>b.score-a.score||(a.type==='topic'?-1:1))}

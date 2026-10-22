@@ -14,3 +14,4 @@ table{width:100%;border-collapse:collapse;font-size:.85rem}td,th{border-bottom:1
 .cc{background:#0f172a;border:1px dashed #64748b;border-radius:10px;padding:10px;line-height:1.5}.cc b{color:#93c5fd}
 .lbl{color:var(--warn);font-weight:700;font-size:.85rem}a{color:#60a5fa}.back{border:0;background:#334155;color:var(--text);padding:8px 12px;border-radius:8px;margin-bottom:6px}
 .k{color:var(--muted);font-size:.78rem}
+.grp{font-size:1rem;margin:18px 4px 8px;color:#ff8a8a}

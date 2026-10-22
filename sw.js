@@ -1,5 +1,5 @@
-const CACHE = 'smp-ref-v3';
-const ASSETS = ['./', './index.html', './calculator.html', './app.css', './app.js', './calc.js', './calc-data.js', './data/drugs.js', './data/discrepancies.js', './data/topics/bleeding.js', './data/topics/acs.js', './data/topics/stroke.js', './data/topics/cpr.js', './data/topics/poisoning.js', './data/topics/anaphylaxis.js', './data/topics/fracture.js', './data/topics/burns.js', './data/topics/coma.js', './data/topics/seizures.js', './data/topics/syncope.js', './manifest.webmanifest', './icon-192.png', './icon-512.png', './icon-512-maskable.png', './apple-touch-icon.png'];
+const CACHE = 'smp-ref-v4';
+const ASSETS = ['./', './index.html', './calculator.html', './app.css', './app.js', './calc.js', './calc-data.js', './data/drugs.js', './data/discrepancies.js', './data/topics/bleeding.js', './data/topics/acs.js', './data/topics/stroke.js', './data/topics/cpr.js', './data/topics/poisoning.js', './data/topics/anaphylaxis.js', './data/topics/fracture.js', './data/topics/burns.js', './data/topics/coma.js', './data/topics/seizures.js', './data/topics/syncope.js', './data/topics/htn-crisis.js', './data/topics/tachy.js', './data/topics/brady.js', './data/topics/alhf.js', './data/topics/cardioshock.js', './data/topics/pe.js', './data/topics/aortic.js', './manifest.webmanifest', './icon-192.png', './icon-512.png', './icon-512-maskable.png', './apple-touch-icon.png'];
 self.addEventListener('install', e => {
   e.waitUntil(caches.open(CACHE).then(c => c.addAll(ASSETS)).then(() => self.skipWaiting()));
 });

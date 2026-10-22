@@ -31,11 +31,18 @@ function render(){
   else if(tab==='disc')v.innerHTML=`<div class="card"><h3>Расхождения: шпаргалка калькулятора ↔ книга</h3><table><tr><th>Препарат</th><th>Шпаргалка</th><th>Книга</th></tr>${window.DISCREPANCIES.map(x=>`<tr><td><b>${esc(x.d)}</b><div class="src">с. ${esc(x.p)}</div></td><td>${esc(x.old)}</td><td>${esc(x.book)}<div class="k">${esc(x.sev)}</div></td></tr>`).join('')}</table></div><div class="card"><h3>Нет в книге</h3>${li(window.NOT_IN_BOOK)}</div>`;
   else if(tab==='calc')v.innerHTML=`<div class="card"><h3>🧮 Калькулятор доз</h3><p>Возраст + вес → разрешён ли препарат в этом возрасте и доза; список «что можно в этом возрасте».</p><a href="calculator.html">Открыть калькулятор →</a></div>`;
 }
+function mediaBlock(id){const m=(window.MEDIA||{})[id];if(!m)return'';let h='';
+  if(m.rash)h+=`<details open class="media"><summary>🖼 Иллюстрации: сыпь</summary>${m.rash.map(x=>`<figure><img src="${x.src}" alt="${esc(x.cap)}" loading="lazy" class="zoom"><figcaption>${esc(x.cap)}<div class="src">Фото: ${esc(x.author)}, ${esc(x.lic)}, <a href="${x.url}" target="_blank" rel="noopener">Wikimedia Commons</a> ◇ не из книги</div></figcaption></figure>`).join('')}</details>`;
+  if(m.norash)h+=`<details class="media"><summary>🖼 Иллюстрации: сыпь</summary><p class="k">${esc(m.norash)}</p></details>`;
+  if(m.ecg)h+=`<details open class="media"><summary>📈 ЭКГ</summary>${m.ecgnote?`<p class="k">${esc(m.ecgnote)}</p>`:''}${m.ecg.map(x=>`<figure><img src="${x.src}" alt="${esc(x.cap)}" class="zoom ecg"><figcaption>${esc(x.cap)}<div class="src">схема ◇ не из книги</div></figcaption></figure>`).join('')}<p class="k">Нажмите на картинку, чтобы увеличить.</p></details>`;
+  return h}
+function zoomImg(src){const o=document.createElement('div');o.className='lightbox';o.innerHTML=`<img src="${src}"><div class="lbx">✕</div>`;o.onclick=()=>o.remove();document.body.appendChild(o)}
+document.addEventListener('click',e=>{const i=e.target.closest&&e.target.closest('img.zoom');if(i){e.preventDefault();zoomImg(i.getAttribute('src'))}});
 function showTopic(id){const t=T.find(x=>x.id===id),p=t.prevention,c=t.card;
   const sec=(title,arr,open)=>`<details ${open?'open':''}><summary>${title}</summary>${li(arr)}</details>`;
   $('#view').innerHTML=`<button class="back">← Назад</button><div class="card"><div class="m">Раздел: <a href="#" data-ch="${t.group}">${esc(chName(t.id))}</a></div><h2>${t.icon} ${esc(t.title)}</h2><div class="src">Источник: Вёрткин, Свешников, 3-е изд., 2026, с. ${esc(t.pages)}. Собственный пересказ, не цитата.</div>
   ${sec('Определение',t.definition,1)}${sec('Классификация',t.classification)}${sec('Этиология',t.etiology)}${sec('Патогенез',t.pathogenesis)}${sec('Механизмы',t.mechanisms)}
-  ${sec('Клиническая картина',t.clinic,1)}${sec('Диагностика',t.diagnosis)}${sec('Лечение (догоспитальный этап / СМП)',t.treatment)}
+  ${sec('Клиническая картина',t.clinic,1)}${mediaBlock(t.id)}${sec('Диагностика',t.diagnosis)}${sec('Лечение (догоспитальный этап / СМП)',t.treatment)}
   ${sec('🚑 Пошаговый алгоритм помощи',t.algorithm,1)}
   <details open class="warn"><summary>⛔ Критические предупреждения</summary>${li(t.warnings)}</details>
   <details><summary>🛡 Профилактика (подробно)</summary><p class="k">${esc(p.book)}</p><b>Первичная</b>${li(p.primary)}<b>Вторичная</b>${li(p.secondary)}<b>Факторы риска</b>${li(p.risk)}<b>Что делать пациенту</b>${li(p.patient)}<b>Что делать окружающим</b>${li(p.bystanders)}<b>На что обратить внимание</b>${li(p.watch)}</details>

@@ -1,0 +1,17 @@
+window.CHAPTERS=[
+{id:"obgyn",title:"Акушерство и гинекология",icon:"🤰",pages:"19–35"},
+{id:"allergy",title:"Аллергология",icon:"🤧",pages:"36–40"},
+{id:"infect",title:"Инфекционные и паразитарные болезни",icon:"🦠",pages:"41–94"},
+{id:"cardio",title:"Кардиология",icon:"❤️",pages:"95–124"},
+{id:"neuro",title:"Неврология",icon:"🧠",pages:"125–135"},
+{id:"psych",title:"Психиатрия и наркология",icon:"🧩",pages:"136–153"},
+{id:"icu",title:"Реанимация и интенсивная терапия",icon:"🫀",pages:"154–196"},
+{id:"therapy",title:"Терапия",icon:"🩺",pages:"197–214"},
+{id:"tox",title:"Токсикология",icon:"☠️",pages:"215–244"},
+{id:"trauma",title:"Травматология и нейрохирургия",icon:"🦴",pages:"245–280"},
+{id:"onco",title:"Онкология",icon:"🎗️",pages:"281–282"},
+{id:"ent",title:"Оториноларингология",icon:"👂",pages:"283–293"},
+{id:"eye",title:"Офтальмология",icon:"👁️",pages:"294–296"},
+{id:"uro",title:"Урология",icon:"💧",pages:"297–309"},
+{id:"surg",title:"Хирургия",icon:"🔪",pages:"310–329"},
+{id:"maxfac",title:"Челюстно-лицевая хирургия",icon:"🦷",pages:"330–334"}];

@@ -14,22 +14,26 @@ function search(q){q=norm(q).trim();if(!q)return [];const words=q.split(/\s+/).f
     if(score>0)res.push(Object.assign({score},e))});
   return res.sort((a,b)=>b.score-a.score||(a.type==='topic'?-1:1))}
 window.APP_SEARCH=search;
-let tab='topics';
+const chName=id=>{const t=T.find(x=>x.id===id),c=t&&window.CHAPTERS.find(c=>c.id===t.group);return c?c.title:''};
+window.APP_CHAP=c=>{chap=c;tab='topics';render()};
+let tab='topics',chap='all';
 function render(){
   document.querySelectorAll('.tabs button').forEach(b=>b.classList.toggle('on',b.dataset.t===tab));
   const q=$('#q').value,v=$('#view');
-  if(q.trim()){const r=search(q);v.innerHTML=`<div class="k">Найдено: ${r.length}</div>`+(r.length?r.map(e=>`<div class="card item" data-type="${e.type}" data-id="${e.id}"><h3>${e.type==='topic'?'📘 ':'💊 '}${esc(e.title)}</h3><div class="m">${e.type==='topic'?'Тема':'Препарат'}</div></div>`).join(''):'<div class="card">Ничего не найдено. Попробуйте симптом: «боль в груди», «судороги», «сыпь».</div>');return}
+  if(q.trim()){const r=search(q);v.innerHTML=`<div class="k">Найдено: ${r.length}</div>`+(r.length?r.map(e=>`<div class="card item" data-type="${e.type}" data-id="${e.id}"><h3>${e.type==='topic'?'📘 ':'💊 '}${esc(e.title)}</h3><div class="m">${e.type==='topic'?'Тема · '+esc(chName(e.id)):'Препарат'}</div></div>`).join(''):'<div class="card">Ничего не найдено. Попробуйте симптом: «боль в груди», «судороги», «сыпь».</div>');return}
   const tc=t=>`<div class="card item" data-type="topic" data-id="${t.id}"><h3>${t.icon} ${esc(t.title)}</h3><div class="m">Книга, с. ${esc(t.pages)}</div></div>`;
-  const CARD=T.filter(t=>t.group==='cardio'),GEN=T.filter(t=>t.group!=='cardio');
-  if(tab==='topics')v.innerHTML=`<h2 class="grp">Общие неотложные состояния</h2>`+GEN.map(tc).join('')+`<h2 class="grp" id="cardio">❤️ Кардиология</h2>`+CARD.map(tc).join('');
-  else if(tab==='cardio')v.innerHTML=`<h2 class="grp">❤️ Кардиология — ${CARD.length} тем</h2><div class="k">ОКС, гипертонические кризы, аритмии, отёк лёгких, шок, ТЭЛА, расслоение аорты. Инфекционный эндокардит в книге есть (с. 123), но как неотложная тема не выделен.</div>`+CARD.map(tc).join('');
+  const inCh=(t,c)=>t.group===c||(t.also||[]).includes(c);
+  if(tab==='topics'){const CH=window.CHAPTERS.filter(c=>T.some(t=>inCh(t,c.id)));
+    let h=`<div class="chips"><button data-ch="all" class="${chap==='all'?'on':''}">Все разделы</button>`+CH.map(c=>`<button data-ch="${c.id}" class="${chap===c.id?'on':''}">${c.icon} ${esc(c.title)}</button>`).join('')+`</div>`;
+    h+=CH.filter(c=>chap==='all'||chap===c.id).map(c=>{const L=T.filter(t=>inCh(t,c.id));return `<h2 class="grp" id="ch-${c.id}">${c.icon} ${esc(c.title)} <span class="m">— ${L.length} тем · с. ${esc(c.pages)}</span></h2>`+(c.note?`<div class="k">${esc(c.note)}</div>`:'')+L.map(tc).join('')}).join('');
+    v.innerHTML=h}
   else if(tab==='drugs')v.innerHTML=`<div class="k">Препаратов: ${D.length}. «в книге не указано» — значения в книге нет.</div>`+D.map((d,i)=>`<div class="card item" data-type="drug" data-id="${i}"><h3>💊 ${esc(d.n)}</h3><div class="m">${esc(d.f)} · с. ${esc(d.p)}</div></div>`).join('');
   else if(tab==='disc')v.innerHTML=`<div class="card"><h3>Расхождения: шпаргалка калькулятора ↔ книга</h3><table><tr><th>Препарат</th><th>Шпаргалка</th><th>Книга</th></tr>${window.DISCREPANCIES.map(x=>`<tr><td><b>${esc(x.d)}</b><div class="src">с. ${esc(x.p)}</div></td><td>${esc(x.old)}</td><td>${esc(x.book)}<div class="k">${esc(x.sev)}</div></td></tr>`).join('')}</table></div><div class="card"><h3>Нет в книге</h3>${li(window.NOT_IN_BOOK)}</div>`;
   else if(tab==='calc')v.innerHTML=`<div class="card"><h3>🧮 Калькулятор доз</h3><p>Возраст + вес → разрешён ли препарат в этом возрасте и доза; список «что можно в этом возрасте».</p><a href="calculator.html">Открыть калькулятор →</a></div>`;
 }
 function showTopic(id){const t=T.find(x=>x.id===id),p=t.prevention,c=t.card;
   const sec=(title,arr,open)=>`<details ${open?'open':''}><summary>${title}</summary>${li(arr)}</details>`;
-  $('#view').innerHTML=`<button class="back">← Назад</button><div class="card"><h2>${t.icon} ${esc(t.title)}</h2><div class="src">Источник: Вёрткин, Свешников, 3-е изд., 2026, с. ${esc(t.pages)}. Собственный пересказ, не цитата.</div>
+  $('#view').innerHTML=`<button class="back">← Назад</button><div class="card"><div class="m">Раздел: <a href="#" data-ch="${t.group}">${esc(chName(t.id))}</a></div><h2>${t.icon} ${esc(t.title)}</h2><div class="src">Источник: Вёрткин, Свешников, 3-е изд., 2026, с. ${esc(t.pages)}. Собственный пересказ, не цитата.</div>
   ${sec('Определение',t.definition,1)}${sec('Классификация',t.classification)}${sec('Этиология',t.etiology)}${sec('Патогенез',t.pathogenesis)}${sec('Механизмы',t.mechanisms)}
   ${sec('Клиническая картина',t.clinic,1)}${sec('Диагностика',t.diagnosis)}${sec('Лечение (догоспитальный этап / СМП)',t.treatment)}
   ${sec('🚑 Пошаговый алгоритм помощи',t.algorithm,1)}
@@ -48,6 +52,7 @@ function showDrug(i){const d=D[i];
 document.addEventListener('click',e=>{const it=e.target.closest('.item'),b=e.target.closest('.tabs button'),dl=e.target.closest('[data-drug]');
   if(dl){e.preventDefault();showDrug(+dl.dataset.drug);return}
   if(e.target.closest('.back')){render();return}
+  const ch=e.target.closest('[data-ch]');if(ch){e.preventDefault();chap=ch.dataset.ch;tab='topics';$('#q').value='';render();return}
   if(b){tab=b.dataset.t;$('#q').value='';render();return}
   if(it){it.dataset.type==='topic'?showTopic(it.dataset.id):showDrug(+it.dataset.id)}});
 $('#q').addEventListener('input',render);render();
